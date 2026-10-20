@@ -1,0 +1,1183 @@
+
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PRISMA · Manual del Explorador</title>
+<link rel="icon" type="image/png" href="./favicon.png">
+<meta name="description" content="PRISMA · Lectoescucha Interactiva. Deconstruye la luz del conocimiento.">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#f4f7fc;--surface:#fff;--text:#212529;--text-sec:#6c757d;--border:#dee2e6;
+--nodo-bg:#fff;--nodo-hover:#f8faff;--editor-bg:#fafbfc;--level-0-bg:#fef5e7;
+--highlight:#ffeb3b;--highlight-text:#000;--prisma-blue:#3498db;--prisma-violet:#9b59b6;
+--prisma-gold:#c9a227;--prisma-emerald:#2ecc71}
+body.dark{--bg:#0a1128;--surface:rgba(255,255,255,.06);--text:#e8ecf5;--text-sec:#a0aec9;
+--border:rgba(255,255,255,.12);--nodo-bg:rgba(255,255,255,.05);--nodo-hover:rgba(52,152,219,.14);
+--editor-bg:rgba(0,0,0,.28);--level-0-bg:rgba(201,162,39,.12);
+--highlight:#c9a227;--highlight-text:#fff}
+html,body{transition:background-color .25s,color .25s}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:20px;min-height:100vh}
+.prisma-header{padding:22px;border-radius:14px;margin-bottom:18px;color:#fff;background-color:#0a1128;
+  background-image:linear-gradient(135deg,#0a1128,#1a2a5e,#3a1f5e);background-size:cover;background-position:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.prisma-header h1{margin:0;font-size:1.55rem;color:#fff;background:linear-gradient(90deg,#fff,#c9a227,#3498db);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand-logo{max-height:64px;max-width:220px;display:block;object-fit:contain;margin-bottom:10px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.prisma-intro{background:rgba(201,162,39,.1);border-left:4px solid var(--prisma-gold);padding:14px 18px;margin-bottom:22px;border-radius:8px;font-style:italic;line-height:1.65;color:var(--text)}
+h1{font-size:1.5rem;margin:0 0 16px}
+.toolbar{background:var(--surface);border-radius:12px;padding:10px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,.06);border:1px solid var(--border)}
+.toolbar button{border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:14px;font-weight:700;color:#fff;transition:filter .15s,transform .15s}
+.toolbar button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn-play{background:#2ecc71}.btn-stop{background:#e74c3c}.btn-loop{background:#9b59b6}
+.btn-loop.active{background:#27ae60;box-shadow:inset 0 0 0 2px #fff}
+.btn-karaoke{background:#3498db}.btn-karaoke.active{background:#2980b9;box-shadow:inset 0 0 0 2px #fff}
+.btn-accion{background:#5d6d8a}.btn-accion.peligro{background:#e67e22}
+.btn-settings{background:#c9a227;color:#0a1128 !important;}
+.timer{font-family:monospace;font-weight:bold;font-size:15px;color:var(--text);background:var(--editor-bg);padding:6px 12px;border-radius:8px;border:1px solid var(--border);min-width:68px;text-align:center}
+select{padding:7px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;background:var(--editor-bg);color:var(--text);cursor:pointer;max-width:220px}
+select option{background-color:#fff;color:#212529}
+body.dark select option{background-color:#1a1a2e;color:#e8ecf5}
+.status{font-size:12px;color:var(--text-sec);margin-left:auto;font-weight:600}
+.progress-badge{font-size:12px;color:var(--text-sec);padding:5px 11px;background:var(--editor-bg);border:1px solid var(--border);border-radius:20px;font-weight:600}
+.progress-badge.ok{color:#27ae60;border-color:#27ae60}
+.search-box{display:flex;align-items:center;background:var(--surface);border-radius:20px;padding:4px 12px;border:1px solid var(--border);margin-bottom:12px}
+.search-box input{border:none;outline:none;flex:1;padding:8px;font-size:14px;background:transparent;color:inherit}
+.search-box button{border:none;background:transparent;cursor:pointer;font-size:16px;color:var(--text-sec);padding:4px 8px;border-radius:6px}
+.card-nodo{border-left:5px solid;padding:10px 16px;margin-bottom:6px;cursor:pointer;background:var(--nodo-bg);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);transition:transform .15s,background .15s}
+.card-nodo:hover{transform:translateX(4px);background:var(--nodo-hover)}
+.card-nodo.hl{background:var(--highlight);color:var(--highlight-text);font-weight:bold}
+.level-0{border-left-color:#c9a227;background:var(--level-0-bg)}
+.level-1{border-left-color:#3498db}
+.level-2{border-left-color:#2ecc71}
+.level-3{border-left-color:#9b59b6}
+.level-4{border-left-color:#e74c3c}
+.nodo-titulo{font-weight:600;display:flex;justify-content:flex-start;align-items:center;font-size:14px;gap:10px}
+.nodo-titulo .titulo-txt{flex:1;line-height:1.4}
+.nodo-chk{width:18px;height:18px;cursor:pointer;accent-color:#3498db;flex-shrink:0;margin:0}
+.nodo-hijos{margin-left:24px;padding-left:14px;border-left:2px dashed var(--border);margin-top:6px}
+.collapsed{display:none}
+.icono-toggle{font-size:.85rem;opacity:.6;margin-left:10px;user-select:none;flex-shrink:0}
+#karaokeModal{display:none;position:fixed;inset:0;background:var(--bg);z-index:5000;flex-direction:column}
+#karaokeModal.show{display:flex}
+#karaokeHeader{background:linear-gradient(135deg,#0a1128,#1a2a5e,#3a1f5e);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+#karaokeHeader h3{margin:0;font-size:1.05rem;color:#fff}
+#karaokeHeader .kc{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+#karaokeHeader button{border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;font-weight:700;color:#fff}
+#karaokeBody{flex:1;overflow-y:auto;padding:30px 50px;font-size:1.7rem;line-height:2.1;color:var(--text);background:var(--editor-bg);position:relative;scroll-behavior:smooth;overflow-wrap:break-word;word-break:break-word;white-space:normal;max-width:100%}
+.kw{padding:2px 4px;border-radius:4px;transition:background .15s,color .15s}
+.kw.hl{background:var(--highlight);color:var(--highlight-text);font-weight:bold;box-shadow:0 0 10px rgba(201,162,39,.6)}
+.knt{font-size:1.05rem;color:#3498db;font-weight:700;margin-bottom:14px;padding-bottom:6px;border-bottom:2px solid var(--border);overflow-wrap:break-word;word-break:break-word}
+#capturasPanel{background:var(--editor-bg);border-top:2px solid #3498db;max-height:38vh;overflow-y:auto;display:flex;flex-direction:column}
+#capturasHeader{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:6px}
+#capturasHeader span{font-weight:bold;font-size:13px;color:var(--text)}
+#capturasHeader button{border:none;border-radius:6px;padding:4px 9px;cursor:pointer;font-size:11px;font-weight:bold;background:#3498db;color:#fff}
+#capturasHeader button.danger{background:#e74c3c}
+#capturasHeader button.violet{background:#9b59b6}
+#capturasList{padding:6px 14px;display:flex;flex-direction:column;gap:6px}
+.cap-item{background:var(--surface);border-left:4px solid #c9a227;border-radius:6px;padding:6px 10px;font-size:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.cap-text{flex:1;line-height:1.4;font-family:monospace;font-size:11px;word-break:break-word}
+.cap-acc{display:flex;gap:3px}
+.cap-acc button{border:none;background:var(--editor-bg);border-radius:4px;padding:2px 6px;cursor:pointer;font-size:10px;color:var(--text)}
+.cap-vacio{color:var(--text-sec);text-align:center;padding:16px;font-style:italic;font-size:11px}
+
+/* Modales Export */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,8,20,.72);z-index:4000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal-content{background:var(--surface);border-radius:18px;max-width:560px;width:92%;padding:22px;box-shadow:0 24px 64px rgba(0,0,0,.5);border:1px solid var(--border);max-height:90vh;overflow-y:auto}
+.modal-content h5{margin:0;color:var(--text);font-weight:700}
+.modal-content label{font-size:.82rem;color:var(--text-sec);font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;display:block}
+.close-x{border:none;background:none;font-size:1.5rem;cursor:pointer;color:var(--text-sec);line-height:1;padding:0 4px}
+.close-x:hover{color:#e74c3c}
+#sintesisModal { z-index: 6000 !important; }
+.sintesis-tabs{display:flex;gap:4px;margin-bottom:10px;border-bottom:1px solid var(--border)}
+.sintesis-tabs button{background:transparent;border:none;padding:10px 18px;cursor:pointer;color:var(--text-sec);border-bottom:2px solid transparent;font-weight:700;font-size:.88rem;transition:all .2s;}
+.sintesis-tabs button.active{color:#3498db;border-bottom-color:#3498db}
+.sintesis-textarea{width:100%;min-height:340px;font-family:'Fira Code',monospace;font-size:12px;line-height:1.65;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--editor-bg);color:var(--text);resize:vertical}
+
+/* 🔮 Estilos del PRISMA Visual */
+.prisma-node {
+  position:relative; padding:16px 20px; margin-bottom:14px; border-radius:12px;
+  background:var(--surface); border-left:6px solid var(--prisma-gold);
+  box-shadow:0 4px 15px rgba(0,0,0,.08); animation: slideIn .4s ease-out forwards;
+  opacity:0; transform:translateY(20px);
+}
+.prisma-node.nivel-1 { border-left-color: var(--prisma-blue); margin-left: 5%; background:rgba(52,152,219,.03); }
+.prisma-node.nivel-2 { border-left-color: var(--prisma-emerald); margin-left: 10%; background:rgba(46,204,113,.03); }
+.prisma-node.nivel-3 { border-left-color: var(--prisma-violet); margin-left: 15%; background:rgba(155,89,182,.03); }
+.prisma-title { font-weight: 800; font-size: 1.3rem; color: var(--prisma-gold); margin-bottom: 6px; display:flex; align-items:center; gap:10px;}
+.prisma-subtitle { font-weight: 700; font-size: 1.1rem; color: var(--prisma-blue); margin-bottom: 4px;}
+.prisma-text { font-size: 1rem; line-height: 1.6; color: var(--text); }
+.prisma-bullet { display:flex; gap:10px; margin-top:8px; font-size:.95rem; line-height:1.5; }
+.prisma-bullet::before { content:"◆"; color: var(--prisma-emerald); font-size:.9rem; margin-top:2px; }
+@keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+
+.btn-sumula-accion{background:linear-gradient(135deg,#c9a227,#9b59b6);color:#fff;border:none;border-radius:30px;padding:10px 22px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(155,89,182,.35);transition:.18s}
+.btn-sumula-accion:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.btn-guia{display:inline-block;background:rgba(52,152,219,.15);color:#3498db;padding:10px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;margin-top:10px;border:1px dashed #3498db;width:100%;text-align:center;transition:.2s}
+.btn-guia:hover{background:rgba(52,152,219,.3);color:#fff}
+
+/* Loading Spinner */
+.spinner-border { display: inline-block; width: 1.5rem; height: 1.5rem; vertical-align: text-bottom; border: 0.25em solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spinner-border .75s linear infinite; }
+@keyframes spinner-border { to { transform: rotate(360deg); } }
+
+@media(max-width:768px){body{padding:10px}.toolbar button{padding:6px 10px;font-size:13px}h1{font-size:1.2rem}#karaokeBody{padding:16px 20px;font-size:1.3rem}.prisma-node.nivel-1{margin-left:2%;}.prisma-node.nivel-2{margin-left:4%;}.prisma-node.nivel-3{margin-left:6%;}}
+
+/* ═══════════ AUTH PRISMA ═══════════ */
+#nexusAuth{position:fixed;inset:0;background:rgba(10,17,40,.95);backdrop-filter:blur(12px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;color:#eef1f6}
+#nexusAuth .box{background:rgba(35,39,53,.8);border:1px solid rgba(201,162,39,.3);border-radius:18px;padding:24px 22px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.8);animation:nxaIn .3s ease;backdrop-filter:blur(10px)}
+@keyframes nxaIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+#nexusAuth .brand{text-align:center;margin-bottom:22px}
+#nexusAuth .brand h2{margin:0;font-size:1.4rem;background:linear-gradient(135deg,#c9a227,#e6c84a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}
+#nexusAuth .brand p{margin:6px 0 0;color:#8b93a5;font-size:12px;text-transform:uppercase;letter-spacing:2px}
+#nexusAuth .fld{margin-bottom:14px}
+#nexusAuth .fld label{display:block;font-size:11px;color:#c9a227;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700}
+#nexusAuth .fld input,#nexusAuth .fld select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2b3040;background:rgba(15,17,23,.8);color:#eef1f6;font-size:15px;outline:none;transition:border .15s}
+#nexusAuth .fld input:focus{border-color:#3498db}
+#nexusAuth .fld .err{color:#e74c3c;font-size:11px;margin-top:4px;display:none}
+#nexusAuth .fld.bad input{border-color:#e74c3c}
+#nexusAuth .fld.bad .err{display:block}
+#nexusAuth .row{display:grid;grid-template-columns:80px 1fr;gap:8px}
+#nexusAuth .btn{width:100%;padding:14px;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,#3498db,#2980b9);transition:transform .1s,filter .15s;font-family:inherit;margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+#nexusAuth .btn:active{transform:scale(.98)}
+#nexusAuth .btn.alt{background:transparent;border:1px solid #c9a227;color:#c9a227}
+#nexusAuth .btn.success{background:linear-gradient(135deg,#2ecc71,#27ae60)}
+#nexusAuth .btn.donate{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+#nexusAuth .info-box{background:rgba(15,17,23,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;font-size:13px;margin-bottom:14px;line-height:1.6;color:#b0b8c5}
+#nexusAuth .info-box b{color:#c9a227}
+#nexusAuth .metodo{padding:12px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid rgba(255,255,255,.1);margin-bottom:8px;cursor:pointer;transition:all .2s}
+#nexusAuth .metodo.on{border-color:#c9a227;background:rgba(201,162,39,.1)}
+#nexusAuth .pay-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#0a3d6b,#1565c0);color:#fff;text-decoration:none;padding:15px;border-radius:12px;font-weight:800;font-size:14px;margin:10px 0;box-shadow:0 6px 20px rgba(21,101,192,.4);animation:nxaPulse 2.2s infinite;border:none;cursor:pointer;width:100%}
+@keyframes nxaPulse{0%,100%{box-shadow:0 6px 20px rgba(21,101,192,.4)}50%{box-shadow:0 6px 30px rgba(21,101,192,.8)}}
+#nexusAuth .msg{padding:12px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none}
+#nexusAuth .msg.show{display:block}
+#nexusAuth .msg.ok{background:rgba(46,204,113,.1);color:#2ecc71;border:1px solid #2ecc71}
+#nexusAuth .msg.err{background:rgba(231,76,60,.1);color:#e74c3c;border:1px solid #e74c3c}
+#nexusAuth .msg.wait{background:rgba(243,156,18,.1);color:#f39c12;border:1px solid #f39c12}
+#nexusAuth .note{font-size:11px;color:#8b93a5;text-align:center;margin-top:16px}
+#nexusAuth .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:nxaSpin .8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes nxaSpin{to{transform:rotate(360deg)}}
+
+/* Footer PRISMA */
+.prisma-footer{text-align:center;padding:24px;font-size:12px;color:#8b93a5;border-top:1px solid #2b3040;margin-top:40px;font-family:-apple-system,sans-serif}
+.prisma-footer b{color:#c9a227;letter-spacing:2px;font-size:14px}
+</style>
+
+
+<div class="prisma-header" __prisma_banner_style__="">
+  <img src="https://raw.githubusercontent.com/kennyji1771/sumula/main/favicon.png" class="brand-logo" alt="PRISMA">
+  <h1>PRISMA · Manual del Explorador</h1>
+</div>
+<div class="prisma-intro">Bienvenido a PRISMA · Lectoescucha Interactiva.<br>Aquí no lees un libro: prismas una obra. El texto ha sido transformado en capas comprensibles —estructura, voz, capturas y síntesis con IA— para que puedas escuchar, seleccionar, repetir y correlacionar ideas a tu ritmo.<br>Activa el karaoke, ajusta la velocidad de la voz, marca con ⭐ los fragmentos que te interpelan y sintetízalos con inteligencia artificial para ver cómo se conectan.<br>La obra es la luz blanca. PRISMA es el cristal que la descompone.</div>
+
+<div class="toolbar">
+  <button class="btn-play" id="btnPlay" title="Play/Pausa (Espacio)">▶</button>
+  <button class="btn-stop" id="btnStop" title="Detener">⏹</button>
+  <button class="btn-loop" id="btnLoop" title="Repetir todo">🔁</button>
+  <button class="btn-karaoke" id="btnKaraoke" title="Lectura Asistida (K)">📖</button>
+  <select id="voiceSelect" title="Voz"></select>
+  <span class="timer" id="timerDisplay">00:00</span>
+  <button class="btn-settings" id="btnConfigExp" title="Configurar API Key">⚙️</button>
+  <button class="btn-accion" id="btnHelp" style="background:#17a2b8;" title="Ayuda / Tutorial">?</button>
+  <button class="btn-accion" id="btnDonar" style="background:#e74c3c; display:none; margin-left:10px;" title="Apoyar este proyecto">❤️ Apoyar</button>
+  <span class="status" id="status">Listo</span>
+</div>
+
+<div class="toolbar">
+  <button class="btn-accion" id="btnExpandir" title="Expandir todo (E)">⊞ Expandir</button>
+  <button class="btn-accion" id="btnColapsar" title="Colapsar todo (C)">⊟ Colapsar</button>
+  <select id="collapseLevel" title="Colapsar a nivel">
+    <option value="">Colapsar a nivel…</option>
+    <option value="0">Solo nivel 1</option>
+    <option value="1">Hasta nivel 2</option>
+    <option value="2">Hasta nivel 3</option>
+    <option value="3">Hasta nivel 4</option>
+  </select>
+  <button class="btn-accion" id="btnTheme" title="Modo oscuro (T)">🌙 Oscuro</button>
+  <button class="btn-accion peligro" id="btnClearSel" title="Limpiar selección">✕ Limpiar</button>
+  <span class="progress-badge" id="progressInfo">Todos los nodos</span>
+  <span class="progress-badge" id="estimatedTime"></span>
+</div>
+
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="Buscar…">
+  <button id="clearSearch">✕</button>
+</div>
+
+<div id="mapa"></div>
+
+<!-- Modal Config API -->
+<div class="modal-overlay" id="configExpModal">
+  <div class="modal-content">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h5>⚙️ Configuración del Documento</h5>
+      <button id="closeConfigExp" class="close-x">×</button>
+    </div>
+    <div class="mb-3">
+      <label>API Key de Gemini AI (✨)</label>
+      <input type="password" class="form-control" id="geminiKeyExp" placeholder="Pega tu clave aquí (AIza...)" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--editor-bg);color:var(--text);margin-bottom:8px;">
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn-guia">🔗 Obtener mi API Key Gratis (Paso a Paso)</a>
+      <div style="font-size:11px;color:var(--text-sec);margin-top:8px;line-height:1.4;">
+        <b>¿Cómo obtenerla?</b><br>
+        1. Haz clic en el enlace azul de arriba.<br>
+        2. Inicia sesión con tu cuenta de Google.<br>
+        3. Haz clic en "Create API key" (Crear clave).<br>
+        4. Copia la clave generada y pégala aquí.
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;">
+      <button class="btn-accion" id="saveConfigExp" style="background:#3498db;padding:10px 20px;">Guardar Clave</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Tutorial -->
+<div class="modal-overlay" id="welcomeModal">
+  <div class="modal-content" style="max-width:600px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h5 style="color:var(--prisma-gold); font-size:1.4rem;"><i class="fas fa-gem me-2"></i> Bienvenido a PRISMA</h5>
+      <button id="closeWelcome" class="close-x">×</button>
+    </div>
+    <p style="font-size:.95rem; line-height:1.6; margin-bottom:16px;">Estás ante un <b>Ecosistema Pedagógico Inteligente</b>. Para aprovecharlo al máximo, sigue estos 3 pasos:</p>
+
+    <div style="background:var(--editor-bg); padding:15px; border-radius:10px; margin-bottom:15px; border-left:4px solid var(--prisma-blue);">
+      <h6 style="font-weight:bold; color:var(--prisma-blue);">1. Configura tu IA</h6>
+      <p style="font-size:.85rem; margin:0; color:var(--text-sec);">Haz clic en el engranaje ⚙️ arriba a la derecha y pega tu API Key de Gemini (es gratis).</p>
+    </div>
+
+    <div style="background:var(--editor-bg); padding:15px; border-radius:10px; margin-bottom:15px; border-left:4px solid var(--prisma-emerald);">
+      <h6 style="font-weight:bold; color:var(--prisma-emerald);">2. Lee y Captura</h6>
+      <p style="font-size:.85rem; margin:0; color:var(--text-sec);">Usa el botón 📖 para abrir el Karaoke. Mientras lees, pulsa "⭐ Capturar" en los fragmentos que consideres clave.</p>
+    </div>
+
+    <div style="background:var(--editor-bg); padding:15px; border-radius:10px; margin-bottom:20px; border-left:4px solid var(--prisma-violet);">
+      <h6 style="font-weight:bold; color:var(--prisma-violet);">3. Sintetiza y Prisma</h6>
+      <p style="font-size:.85rem; margin:0; color:var(--text-sec);">Haz clic en "✨ Sintetizar (IA)". La IA correlacionará tus capturas. Luego, haz clic en la pestaña "🔮 PRISMAR" para ver el conocimiento desplegado visualmente.</p>
+    </div>
+
+    <div style="text-align:center; font-style:italic; font-size:1.05rem; color:var(--prisma-gold); font-weight:bold; padding:15px; border-top:1px dashed var(--border); border-bottom:1px dashed var(--border); margin-bottom:20px;">
+      "PRISMA: La única herramienta que no solo te resume textos, sino que te enseña cómo se conectan las ideas a través de su motor de correlación. PRISMANDO EL CONOCIMIENTO."
+    </div>
+
+    <button id="btnEntendido" class="btn-sumula-accion w-100" style="border-radius:10px;">Comenzar a Explorar</button>
+  </div>
+</div>
+
+<!-- Modal Donación -->
+<div class="modal-overlay" id="donationModal" style="z-index:9998;">
+  <div class="modal-content" style="max-width:440px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h5 style="color:var(--prisma-gold); font-size:1.4rem;"><i class="fas fa-heart" style="color:#e74c3c;"></i> Apoyar este Proyecto</h5>
+      <button id="closeDonation" class="close-x">×</button>
+    </div>
+    <p style="font-size:.95rem; line-height:1.6; margin-bottom:16px; color:var(--text); text-align:center;">
+      Tu donación nos ayuda a mantener este ecosistema libre y accesible para todos. ¡Gracias por apoyar la educación!
+    </p>
+    <div style="background:var(--editor-bg); padding:15px; border-radius:10px; text-align:center; border:1px solid var(--border);">
+      <p style="margin:0 0 10px 0; font-size:.85rem; color:var(--text-sec);">Para donar, puedes usar nuestros métodos de pago:</p>
+      <p style="margin:5px 0; font-size:.9rem;"><b>PagoMóvil (BDV):</b> V-10849867 / 04166334492</p>
+      <p style="margin:5px 0; font-size:.9rem;"><b>PayPal:</b> sieveresgerardk@gmail.com</p>
+      <p style="margin:15px 0 0 0; font-size:.75rem; font-style:italic; color:var(--text-sec);">Al ser una donación opcional, no requiere validación para acceder al contenido.</p>
+    </div>
+    <button id="btnCloseDonation2" class="btn-sumula-accion w-100" style="border-radius:10px; margin-top:20px;">Cerrar</button>
+  </div>
+</div>
+
+<!-- Modal Síntesis -->
+<div class="modal-overlay" id="sintesisModal">
+  <div class="modal-content" style="max-width:880px;width:94%;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h5>✨ Síntesis Pedagógica con Gemini</h5>
+      <button id="closeSintesisModal" class="close-x">×</button>
+    </div>
+    <div class="sintesis-tabs">
+      <button id="tabTxt" class="active">📄 Texto Enriquecido</button>
+      <button id="tabSumula">📋 SÚMULA (Markdown)</button>
+      <button id="tabPrismar">🔮 PRISMAR</button>
+    </div>
+    <textarea id="sintesisTxt" class="sintesis-textarea" readonly="" placeholder="Generando análisis profundo con Gemini..."></textarea>
+    <textarea id="sintesisSumula" class="sintesis-textarea" readonly="" style="display:none" placeholder="Generando SÚMULA..."></textarea>
+
+    <div id="prismarContainer" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:9999; flex-direction:column;">
+      <div style="padding:15px 20px; background:linear-gradient(135deg,#0a1128,#1a2a5e); color:#fff; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,.4);">
+        <h4 style="margin:0; font-size:1.2rem;"><i class="fas fa-gem" style="color:var(--prisma-gold); margin-right:8px;"></i> PRISMA · Vista del Conocimiento</h4>
+        <button id="btnCerrarPrisma" style="background:var(--prisma-violet); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-weight:bold; cursor:pointer; transition:.2s;"><i class="fas fa-undo"></i> Volver a la Lectura</button>
+      </div>
+      <div id="prismarContent" style="flex:1; overflow-y:auto; padding:30px 10%;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap;">
+      <button id="sintesisDownload" class="btn-sumula-accion">📥 Descargar .txt</button>
+      <button id="sintesisCopy" class="btn-sumula-accion">📋 Copiar al Portapapeles</button>
+      <button id="sintesisCancelar" class="btn-accion" style="padding:8px 16px;border-radius:30px;font-weight:700;color:#fff;border:none;">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="nexusAuth"><div class="box" id="nexusAuthBox"></div></div>
+
+<div id="karaokeModal">
+  <div id="karaokeHeader">
+    <h3>📖 Lectura Asistida</h3>
+    <div class="kc">
+      <button style="background:#3498db" id="kFontDown">A−</button>
+      <button style="background:#3498db" id="kFontUp">A+</button>
+      <button style="background:#2ecc71" id="kPlay">▶</button>
+      <button style="background:#c9a227;color:#0a1128" id="kPause">⏸</button>
+      <button style="background:#e74c3c" id="kStop">⏹</button>
+      <button style="background:#7f8c8d" id="kPrev">⏮</button>
+      <button style="background:#7f8c8d" id="kNext">⏭</button>
+      <button style="background:#c9a227;color:#0a1128" id="kRepeat">🔂1</button>
+      <button style="background:#9b59b6" id="kLoopInf">🔄∞</button>
+      <button style="background:#c9a227;color:#0a1128" id="kCapture">⭐ Capturar</button>
+      <button style="background:#9b59b6" id="kLoopCap">🎯 Bucle Cap.</button>
+      <button style="background:#e74c3c" id="kClose">✕ Cerrar</button>
+    </div>
+  </div>
+  <div id="karaokeBody"></div>
+  <div id="capturasPanel">
+    <div id="capturasHeader">
+      <span>📋 Capturas (<span id="capturasCount">0</span>)</span>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button id="capSintesis" class="violet">✨ Sintetizar (IA)</button>
+        <button id="capDownload">📥 .txt</button>
+        <button id="capCopy">📋 Copiar</button>
+        <button class="danger" id="capClear">🗑</button>
+      </div>
+    </div>
+    <div id="capturasList"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════ AUTH PRISMA (Candado de Seguridad) ═══════════ */
+(function(){
+'use strict';
+var APPS_URL = 'https://script.google.com/macros/s/AKfycbxKY09Sna4ph2x0LiPTogNNZzxjuW4UrTq7hDEB0IcfKLf6Ay_TzOp8VWEe8Rcbb3pA/exec';
+var PRODUCT_ID = "hombre-dios";
+var PRODUCT_TITLE = "PRISMA · Manual del Explorador";
+var PRODUCT_AUTHOR = "Kirpal Sing";
+var AUTH_MODE = "free";       // "paid" o "free"
+var DONATION_ENABLED = true;
+
+var LS = { 
+  email:'nexus_'+PRODUCT_ID+'_email', 
+  token:'nexus_'+PRODUCT_ID+'_sessionToken', 
+  device:'nexus_'+PRODUCT_ID+'_deviceUUID' 
+};
+
+var box = document.getElementById('nexusAuthBox');
+var overlay = document.getElementById('nexusAuth');
+var datos = {};
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function getDeviceUUID(){ var d = localStorage.getItem(LS.device); if (!d){ d = 'dev-' + Date.now() + '-' + Math.random().toString(36).slice(2,10); localStorage.setItem(LS.device, d); } return d; }
+function api(data){
+  var merged = Object.assign({}, data); merged.ua = navigator.userAgent || ''; merged.ip = '';
+  return fetch(APPS_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(merged).toString() }).then(function(r){ return r.json(); });
+}
+function liberar(){
+  overlay.style.display = 'none';
+  window.__NEXUS_AUTH_OK = true;
+  if (typeof window.__NEXUS_INIT === 'function') { try { window.__NEXUS_INIT(); } catch(e){} }
+}
+
+function pantallaInicio(msg){
+  var isFree = (AUTH_MODE === 'free');
+  var btnText = isFree ? 'Acceso Gratuito — Registrarme' : '🛒 Comprar y acceder';
+  var infoText = isFree 
+    ? 'Accede a este contenido de forma libre y gratuita. Solo necesitamos tus datos para registrarte y enviarte tu PIN de acceso.'
+    : 'Domina esta obra con lectura asistida, karaoke interactivo, capturas y síntesis con IA. Compra única · acceso permanente en 2 dispositivos.';
+
+  box.innerHTML =
+    '<div class="brand"><h2>✨ PRISMA</h2><p>COLECCIÓN LECTOESCUCHA</p></div>' +
+    (msg ? '<div class="msg err show">'+esc(msg)+'</div>' : '') +
+    '<div class="info-box"><div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:4px">'+esc(PRODUCT_TITLE)+'</div><div style="font-size:12px;color:#c9a227;margin-bottom:12px">'+esc(PRODUCT_AUTHOR)+'</div>' + infoText + '</div>' +
+    '<button class="btn" id="nxGoReg">' + btnText + '</button>' +
+    '<button class="btn alt" id="nxGoLogin">Ya tengo acceso — Ingresar</button>';
+  
+  $('nxGoReg').onclick = function(){ pantallaRegistro(); };
+  $('nxGoLogin').onclick = function(){ pantallaLogin(); };
+}
+
+function pantallaRegistro(){
+  var isFree = (AUTH_MODE === 'free');
+  var btnText = isFree ? 'Obtener mi PIN de acceso' : 'Continuar al Pago →';
+  box.innerHTML =
+    '<div class="brand"><h2>📝 Datos Personales</h2><p>Paso 1 de 3</p></div>' +
+    '<div class="fld"><label>Nombre</label><input type="text" id="nxN"><div class="err">Obligatorio</div></div>' +
+    '<div class="fld"><label>Apellido</label><input type="text" id="nxA"><div class="err">Obligatorio</div></div>' +
+    '<div class="fld"><label>Documento</label><div class="row"><select id="nxT"><option value="V">V</option><option value="E">E</option></select><input type="text" id="nxD" inputmode="numeric"><div class="err">Inválido</div></div></div>' +
+    '<div class="fld"><label>Correo Electrónico</label><input type="email" id="nxE" inputmode="email"><div class="err">Correo inválido</div></div>' +
+    '<div class="fld"><label>Teléfono</label><input type="tel" id="nxP" inputmode="tel" placeholder="04141234567"><div class="err">Inválido</div></div>' +
+    '<button class="btn" id="nxNext">' + btnText + '</button>' +
+    '<button class="btn alt" id="nxBack">← Volver</button>';
+  $('nxNext').onclick = validarRegistro;
+  $('nxBack').onclick = function(){ pantallaInicio(); };
+}
+
+function validarRegistro(){
+  var c = [{id:'nxN', fn:function(v){return v.length>1;}}, {id:'nxA', fn:function(v){return v.length>1;}}, {id:'nxD', fn:function(v){return v.replace(/\D/g,'').length>=6;}, row:true}, {id:'nxE', fn:function(v){return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);}}, {id:'nxP', fn:function(v){return v.replace(/\D/g,'').length>=10;}}];
+  var ok = true;
+  c.forEach(function(x){ var el = $(x.id); var f = x.row ? el.parentNode.parentNode : el.parentNode; if(!x.fn((el.value||'').trim())){ f.classList.add('bad'); ok=false; } else f.classList.remove('bad'); });
+  if(!ok) return;
+  datos = { nombre: $('nxN').value.trim(), apellido: $('nxA').value.trim(), tipoDoc: $('nxT').value, numDoc: $('nxD').value.trim(), email: $('nxE').value.trim().toLowerCase(), telefono: $('nxP').value.trim() };
+  
+  if (AUTH_MODE === 'free') {
+    pantallaRegistroGratis();
+  } else {
+    pantallaPago();
+  }
+}
+
+function pantallaRegistroGratis(){
+  box.innerHTML = '<div class="brand"><h2>⏳ Procesando Registro</h2></div><div style="text-align:center;padding:20px"><div class="spin" style="width:24px;height:24px;border-width:3px"></div></div>';
+  api({ 
+    accion:'registroGratuito', 
+    nombre:datos.nombre, 
+    apellido:datos.apellido, 
+    tipoDoc:datos.tipoDoc, 
+    numDoc:datos.numDoc, 
+    email:datos.email, 
+    telefono:datos.telefono, 
+    idProducto: PRODUCT_ID 
+  }).then(function(r){
+    if(r.ok) {
+      box.innerHTML = '<div class="brand"><h2>✅ Registro Exitoso</h2></div><div class="msg ok show">Te has registrado correctamente.<br><br>Hemos enviado tu <b>PIN de acceso</b> a tu correo electrónico.<br>Revísalo para ingresar.</div><button class="btn success" id="nxGoLogin">Ir a Ingresar</button>';
+      $('nxGoLogin').onclick = function(){ pantallaLogin(); };
+    } else {
+      pantallaInicio(r.mensaje || 'Error al registrar.');
+    }
+  }).catch(function(e){
+    pantallaInicio(e.message || 'Error de conexión.');
+  });
+}
+
+function pantallaPago(){
+  box.innerHTML = '<div class="brand"><h2>💳 Pago Seguro</h2><p>Paso 2 de 3</p></div><div id="nxMetodos" class="info-box"><div style="text-align:center"><div class="spin"></div></div></div><button class="btn alt" id="nxBack">← Volver</button>';
+  $('nxBack').onclick = function(){ pantallaRegistro(); };
+  api({ accion:'infoProducto', idProducto: PRODUCT_ID }).then(function(r){
+    if (!r.ok) { $('nxMetodos').innerHTML = '<div class="msg err show">'+esc(r.mensaje)+'</div>'; return; }
+    datos.metodos = r.metodos;
+    var html = '';
+    r.metodos.forEach(function(m, i){
+      html += '<div class="metodo'+(i===0?' on':'')+'" data-idx="'+i+'"><div style="font-weight:700;color:#fff">'+esc(m.metodo.icono)+' '+esc(m.metodo.nombre)+'</div><div style="font-size:12px;color:#c9a227">Precio: '+esc(m.precio)+' '+esc(m.metodo.moneda)+'</div></div>';
+    });
+    html += '<div id="nxPagoDetalle" style="margin-top:14px"></div>';
+    $('nxMetodos').innerHTML = html;
+    pintaPagoDetalle(r.metodos[0]);
+    document.querySelectorAll('#nxMetodos .metodo').forEach(function(el){ el.onclick = function(){ document.querySelectorAll('#nxMetodos .metodo').forEach(function(x){ x.classList.remove('on'); }); el.classList.add('on'); pintaPagoDetalle(r.metodos[parseInt(el.dataset.idx)]); }; });
+  });
+}
+
+function pintaPagoDetalle(combo){
+  var met = combo.metodo, dat = combo.datos;
+  var html = '<div style="background:rgba(0,0,0,.3);border-radius:8px;padding:12px;font-size:13px;line-height:1.6;color:#b0b8c5">';
+  if (met.tipo === 'pago_movil'){
+    html += '<div>Cédula: <b>'+esc(dat.cedula)+'</b></div><div>Teléfono: <b>'+esc(dat.telefono)+'</b></div><div>Banco: <b>'+esc(dat.banco)+' (BDV)</b></div>';
+    if(dat.cedula && dat.telefono && dat.banco){ var ced = dat.cedula.replace(/\D/g,''), tel = dat.telefono.replace(/\D/g,''); if(tel.indexOf('58')!==0 && tel.indexOf('0')===0) tel='58'+tel.slice(1); var link='https://bdvdigital.banvenez.com/pagomovil?id='+ced+'&phone='+tel+'&bank='+dat.banco; html += '<a class="pay-btn" href="'+link+'" target="_blank">📲 PAGAR CON BDV</a>'; }
+  } else if (met.tipo === 'transferencia'){
+    html += '<div>Cuenta: <b>'+esc(dat.cuenta)+'</b></div><div>Titular: <b>'+esc(dat.titular)+'</b></div><div>Cédula: <b>'+esc(dat.cedula)+'</b></div>';
+  } else if (met.tipo === 'wallet'){
+    html += '<div>Email: <b>'+esc(dat.email)+'</b></div>';
+  }
+  html += '</div>';
+  html += '<div class="fld" style="margin-top:14px"><label>Monto Pagado ('+esc(met.moneda)+')</label><input type="text" id="nxMonto" value="'+esc(combo.precio)+'"></div>';
+  html += '<div class="fld"><label>Nº Operación / Referencia</label><input type="text" id="nxOp" placeholder="Ej: 00457812"></div>';
+  html += '<div class="msg" id="nxPagoMsg"></div>';
+  html += '<button class="btn success" id="nxPagar">Enviar Pago →</button>';
+  $('nxPagoDetalle').innerHTML = html;
+  $('nxPagar').onclick = function(){
+    var op = ($('nxOp').value||'').trim(); var monto = ($('nxMonto').value||'').trim();
+    if(op.length < 4) { $('nxOp').parentNode.classList.add('bad'); return; }
+    var btn = $('nxPagar'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Enviando...';
+    api({ accion:'registrar', nombre:datos.nombre, apellido:datos.apellido, tipoDoc:datos.tipoDoc, numDoc:datos.numDoc, email:datos.email, telefono:datos.telefono }).then(function(rReg){
+      if(!rReg.ok && rReg.mensaje.indexOf('ya está registrado')===-1) throw new Error(rReg.mensaje);
+      return api({ accion:'iniciarOperacion', email:datos.email, idProducto:PRODUCT_ID, idProductoMetodo:combo.id, numOperacion:op, monto:monto, datos:JSON.stringify({metodo:met.nombre}) });
+    }).then(function(rOp){
+      if(rOp.ok) pantallaEspera();
+      else { btn.disabled=false; btn.textContent='Enviar Pago →'; $('nxPagoMsg').className='msg err show'; $('nxPagoMsg').textContent=rOp.mensaje; }
+    }).catch(function(e){ btn.disabled=false; btn.textContent='Enviar Pago →'; $('nxPagoMsg').className='msg err show'; $('nxPagoMsg').textContent=e.message; });
+  };
+}
+
+function pantallaEspera(){
+  box.innerHTML = '<div class="brand"><h2>⏳ Pago Recibido</h2><p>Paso 3 de 3</p></div><div class="msg wait show">Tu pago y Nº de operación han sido registrados.<br><br>El administrador validará el pago contra el banco. Recibirás un <b>correo con tu PIN de acceso</b> cuando esté aprobado.</div><button class="btn" id="nxGoLogin">Ya recibí mi PIN — Ingresar</button>';
+  $('nxGoLogin').onclick = function(){ pantallaLogin(); };
+}
+
+function pantallaLogin(msg){
+  var emailPre = localStorage.getItem(LS.email) || '';
+  box.innerHTML = '<div class="brand"><h2>🔓 Acceso PRISMA</h2><p>Correo + PIN</p></div>' + (msg?'<div class="msg err show">'+esc(msg)+'</div>':'') + '<div class="fld"><label>Correo Electrónico</label><input type="email" id="nxEmail" value="'+esc(emailPre)+'"><div class="err">Correo inválido</div></div><div class="fld"><label>PIN de 4 dígitos</label><input type="password" id="nxPin" maxlength="4" inputmode="numeric"><div class="err">Debe tener 4 dígitos</div></div><button class="btn success" id="nxLogin">Ingresar al Prisma</button><button class="btn alt" id="nxBack">← Volver</button>';
+  $('nxLogin').onclick = doLogin;
+  $('nxBack').onclick = function(){ pantallaInicio(); };
+  $('nxPin').addEventListener('input', function(e){ e.target.value = e.target.value.replace(/\D/g,'').slice(0,4); });
+}
+
+function doLogin(){
+  var email = ($('nxEmail').value||'').trim().toLowerCase(); var pin = ($('nxPin').value||'').trim();
+  var btn = $('nxLogin'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Verificando...';
+  api({ accion:'loginConPin', email:email, pin:pin, deviceUUID:getDeviceUUID() }).then(function(r){
+    if(r.ok){
+      localStorage.setItem(LS.email, r.email); localStorage.setItem(LS.token, r.sessionToken); localStorage.setItem(LS.device, r.deviceUUID);
+      liberar();
+    } else {
+      btn.disabled = false; btn.textContent = 'Ingresar al Prisma';
+      var prevErr = box.querySelector('.msg.err'); if(prevErr) prevErr.remove();
+      var div = document.createElement('div'); div.className='msg err show'; div.textContent = r.mensaje || 'Error al ingresar';
+      box.insertBefore(div, box.children[2]);
+    }
+  }).catch(function(e){ btn.disabled = false; btn.textContent = 'Ingresar al Prisma'; alert(e.message); });
+}
+
+function arrancar(){
+  var email = localStorage.getItem(LS.email), token = localStorage.getItem(LS.token), device = localStorage.getItem(LS.device);
+  if(email && token && device){
+    box.innerHTML = '<div class="brand"><h2>✨ PRISMA</h2><p>Verificando sesión...</p></div><div style="text-align:center;padding:20px"><div class="spin" style="width:24px;height:24px;border-width:3px"></div></div>';
+    api({ accion:'validarSesion', email:email, sessionToken:token, deviceUUID:device }).then(function(r){
+      if(r.ok) liberar();
+      else { localStorage.removeItem(LS.token); pantallaInicio(); }
+    }).catch(function(){ pantallaInicio(); });
+  } else { pantallaInicio(); }
+}
+arrancar();
+})();
+</script>
+<script>var raw = "# PRISMA · Manual del Explorador\n## Bienvenido al Ecosistema\n- Imagina que el texto es la luz blanca y que PRISMA es el cristal que la descompone en colores.\n- No te encuentras frente a un libro tradicional, sino ante una experiencia viva de Lectoescucha Interactiva.\n- Esta herramienta te permite escuchar la obra, deconstruirla en capas, capturar sus ideas y sintetizarlas.\n- A continuación, exploraremos juntos cómo navegar por este nuevo ecosistema pedagógico.\n\n## El Umbral: Acceso y Seguridad\n### Registro e Identidad\n- Para proteger tu progreso y tu identidad, PRISMA te pedirá que te registres.\n- Si es tu primera vez, solo debes hacer clic en el botón de \"Registrarme\" o \"Acceder\".\n- Dependiendo de la modalidad de este taller, el sistema podría pedirte realizar un pago o, por el contrario, darte acceso libre.\n- Tras registrarte, recibirás un correo electrónico con un PIN de cuatro dígitos; este será tu pasaporte único para entrar.\n### El Candado de Seguridad\n- Ten en cuenta que tu PIN está vinculado a un máximo de dos dispositivos, como tu computadora y tu celular.\n- Si intentas entrar desde un tercer dispositivo, el sistema te bloqueará automáticamente por seguridad.\n- Una vez que estés dentro, la sesión se mantendrá activa para que no tengas que escribir tu PIN cada vez que regreses.\n\n## La Interfaz: Tu Centro de Mando\n### El Panel de Lectura\n- A tu derecha encontrarás el Panel de Lectura, que contiene los controles de reproducción de voz, como Play, Pausa y Detener.\n- Además, puedes ajustar la Velocidad y el Tono de la voz sintetizada a tu gusto.\n- Si deseas medir tu tiempo de estudio o inmersión, simplemente utiliza el botón del Cronómetro.\n### El Mapa del Conocimiento\n- A tu izquierda, verás el Mapa del Conocimiento; aquí, la obra está estructurada en forma de árbol jerárquico.\n- Puedes expandir o colapsar las ramas haciendo clic en los nodos y utilizar las casillas de verificación para seleccionar solo las partes que deseas leer o escuchar.\n### El Buscador y La Barra de Herramientas\n- El buscador resaltará los nodos que contengan la palabra que necesitas encontrar.\n- Mientras tanto, los botones superiores te permiten alternar entre el Modo Claro y Oscuro, lo cual es ideal para la lectura nocturna.\n- Si lo prefieres, puedes limpiar la selección para volver a leer todo el documento desde el principio.\n\n## Lectoescucha: La Voz y el Karaoke\n### El Botón Play\n- Al hacer clic en el botón de Play, PRISMA comenzará a narrar el contenido.\n- La voz respetará las pausas, los puntos y las comas del texto original.\n- Si seleccionaste nodos específicos, el sistema se enfocará únicamente en leer esos fragmentos.\n### La Lectura Asistida\n- Si prefieres una inmersión total, haz clic en el ícono del cuaderno o presiona la tecla \"K\" en tu teclado.\n- El texto se desplegará a pantalla completa en una tipografía grande y cómoda.\n- A medida que la voz narra, las palabras se iluminarán con un resaltado en tiempo real.\n- Puedes usar los botones \"A+\" y \"A-\" para agrandar o reducir el tamaño de la letra según tu necesidad.\n- En el menú del Karaoke, además, encontrarás opciones para repetir la lectura en bucle o ir al párrafo anterior o siguiente.\n\n## La Captura: Atrapando la Luz\n### El Proceso de Captura\n- Mientras lees o escuchas, puedes seleccionar con tu ratón cualquier fragmento de texto que te haya impactado.\n- Luego, solo haz clic en el botón de \"Capturar\" en el menú del Karaoke.\n- Y si no seleccionas nada, el sistema capturará automáticamente el nodo completo que se está leyendo.\n### El Panel de Capturas\n- En la parte inferior de la pantalla del Karaoke, verás un panel que guarda todas tus capturas.\n- Desde ahí podrás copiar cada fragmento al portapapeles o eliminar las que ya no necesites.\n- Ten por seguro que estas capturas serán el ingrediente principal para el siguiente paso: la síntesis.\n\n## La Síntesis: Con Inteligencia Artificial como herramienta.\n### Configurando a Gemini\n- Para utilizar la Inteligencia Artificial, necesitas una API Key de Google Gemini, la cual es completamente gratuita.\n- Solo debes hacer clic en el engranaje de la barra superior y pegar tu clave (este método se conoce como BYOK, o Bring Your Own Key).\n- El sistema guardará tu clave de forma segura en tu navegador para que puedas usarla en futuras sesiones.\n### El Proceso de Síntesis\n- Con tus capturas listas, haz clic en el botón \"Sintetizar\" en el panel inferior.\n- La IA correlacionará todas las ideas que atrapaste. y generará un análisis profundo.\n- Se abrirá una ventana con tres pestañas: primero, un Texto Enriquecido... a modo de ensayo narrativo... \nsegundo... redacción en lenguaje jerarquico; ..SÚMULA. \nla estructurada lista para copiar o descargar; y tercero.\nla vista de Prismar el contenido.\n\n## Prismar Visual: La Deconstrucción\n### El Motor de Correlación\n- Al hacer clic en la pestaña \"PRISMAR\", entrarás directamente en la vista del conocimiento.\n- La IA toma la estructura de tus capturas y la transforma en un hermoso diagrama de nodos animados.\n- Los conceptos principales brillarán en oro, mientras que las ideas secundarias se ramificarán en azul y verde.\n- Esta vista es ideal para entender cómo se conectan los teoremas, los personajes o las enseñanzas de la obra.\n\n## Donación Opcional\n### Apoyando el Proyecto\n- Si este taller es gratuito, notarás un botón rojo en la parte superior que dice \"Apoyar\".\n- En PRISMA creemos firmemente que el conocimiento debe ser libre; pero si esta herramienta te ha sido de utilidad, puedes dejar una donación voluntaria.\n- El botón abrirá una ventana con los datos de Pago Móvil y PayPal, y te agradecemos de corazón por mantener vivo el ecosistema.\n\n## El Legado: Exportación y Memoria\n### Descargar tus Resultados\n- Al finalizar la síntesis, puedes descargar el texto generado y todas las frases que atrapaste en formato de texto plano.\n- Estas herramientas están diseñadas para que construyas tu propio portafolio de saberes.\n- El texto que acabas de leer ahora es tuyo; por lo tanto, es momento de que empieces a prismar el tuyo propio.";</script>
+<script>
+(function(){
+'use strict';
+var synth=window.speechSynthesis;
+var utterance=null,estado='detenido';
+var bucleActivo=false,bucleInfinito=false,bucleCapturas=false;
+var cronoInterval=null,cronoSegundos=0,cronoInicioTramo=0;
+var generacion=0,karaokeActivo=false;
+var karaokeWords=[],karaokePositions=[],karaokeCurrentIdx=-1;
+var karaokeFallbackTimer=null,lastBoundaryTime=0;
+var capturas=[];
+var wakeLock=null,silentCtx=null,silentOsc=null;
+var listaNodos=[],indiceActual=0,parsed=null;
+var fontSizeKaraoke=1.7;
+
+var slug=(document.title||'doc').replace(/[^a-z0-9]/gi,'_').substring(0,40);
+var K={theme:'nx_'+slug+'_th',sel:'nx_'+slug+'_sel',coll:'nx_'+slug+'_col',voice:'nx_'+slug+'_vo',rate:'nx_'+slug+'_ra',pitch:'nx_'+slug+'_pi',caps:'nx_'+slug+'_cp', gemini:'nexus_gemini_key'};
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v;}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function loadSet(k){try{var v=JSON.parse(lsGet(k,'[]'));return new Set(Array.isArray(v)?v.map(String):[]);}catch(e){return new Set();}}
+function saveSet(k,s){lsSet(k,JSON.stringify(Array.from(s)));}
+
+var selectedIds=loadSet(K.sel);
+var collapsedIds=loadSet(K.coll);
+try{var c=lsGet(K.caps,'[]');capturas=JSON.parse(c)||[];}catch(e){capturas=[];}
+
+function $(id){return document.getElementById(id);}
+var btnPlay=$('btnPlay'),btnStop=$('btnStop'),btnLoop=$('btnLoop'),btnKaraoke=$('btnKaraoke'),
+    voiceSelect=$('voiceSelect'),statusEl=$('status'),timerDisplay=$('timerDisplay'),
+    mapaDiv=$('mapa'),progressInfo=$('progressInfo'),estimatedTime=$('estimatedTime'),
+    btnExpandir=$('btnExpandir'),btnColapsar=$('btnColapsar'),collapseLevel=$('collapseLevel'),
+    btnTheme=$('btnTheme'),btnClearSel=$('btnClearSel'),
+    searchInput=$('searchInput'),clearSearch=$('clearSearch'),
+    karaokeModal=$('karaokeModal'),karaokeBody=$('karaokeBody'),
+    kPlay=$('kPlay'),kPause=$('kPause'),kStop=$('kStop'),kPrev=$('kPrev'),kNext=$('kNext'),
+    kRepeat=$('kRepeat'),kLoopInf=$('kLoopInf'),kCapture=$('kCapture'),kLoopCap=$('kLoopCap'),kClose=$('kClose'),
+    kFontUp=$('kFontUp'),kFontDown=$('kFontDown'),
+    capturasCount=$('capturasCount'),capturasList=$('capturasList'),
+    capDownload=$('capDownload'),capCopy=$('capCopy'),capClear=$('capClear'), capSintesis=$('capSintesis');
+
+async function activarMantenimiento(){
+  if('wakeLock' in navigator){try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}}
+  if(!silentCtx){try{var C=window.AudioContext||window.webkitAudioContext;silentCtx=new C();silentOsc=silentCtx.createOscillator();var g=silentCtx.createGain();g.gain.value=0.0001;silentOsc.frequency.value=20000;silentOsc.connect(g);g.connect(silentCtx.destination);silentOsc.start();}catch(e){}}
+}
+function liberarMantenimiento(){
+  if(wakeLock){try{wakeLock.release();}catch(e){}wakeLock=null;}
+  if(silentOsc){try{silentOsc.stop();}catch(e){}silentOsc=null;}
+  if(silentCtx){try{silentCtx.close();}catch(e){}silentCtx=null;}
+}
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&estado==='leyendo')activarMantenimiento();});
+
+function limpiarTexto(t){
+  return t.replace(/^#{1,6}\s*/gm,'').replace(/^[-*]\s*/gm,'').replace(/[*_~`>#\(\)\[\]"";]/g,' ').replace(/\n+/g,'. ')
+    .replace(/\b([A-ZÁÉÍÓÚÑÜ]{5,})\b/g,function(m){return m.charAt(0)+m.slice(1).toLowerCase();})
+    .replace(/\s{2,}/g,' ').trim();
+}
+function dividirOracionesConOffsets(texto){
+  var regex=/[^.!?]+[.!?]+["'»)\]]*\s*|[^.!?]+$/g;
+  var partes=[],m;
+  while((m=regex.exec(texto))!==null){
+    if(m[0].trim().length>0) partes.push({texto:m[0],posicionInicio:m.index});
+    if(m.index===regex.lastIndex)regex.lastIndex++;
+  }
+  if(!partes.length)partes.push({texto:texto,posicionInicio:0});
+  return partes;
+}
+
+function parsear(texto){
+  var lineas=texto.split(/\r?\n/),nodos=[],pila=[],id=1;
+  for(var i=0;i<lineas.length;i++){
+    var a=lineas[i].trim();if(!a)continue;
+    var v=-1,e=a;
+    if(a.indexOf('# ')===0){v=0;e=a.slice(2);}
+    else if(a.indexOf('## ')===0){v=1;e=a.slice(3);}
+    else if(a.indexOf('### ')===0){v=2;e=a.slice(4);}
+    else if(a.indexOf('#### ')===0){v=3;e=a.slice(5);}
+    else if(a.indexOf('- ')===0||a.indexOf('* ')===0){v=pila.length?pila[pila.length-1].v+1:1;e=a.slice(2);}
+    else{v=pila.length?pila[pila.length-1].v+1:1;e=a;}
+    while(pila.length&&pila[pila.length-1].v>=v)pila.pop();
+    var pid=pila.length?pila[pila.length-1].id:null;
+    nodos.push({id:id,e:e,v:v,p:pid});
+    pila.push({id:id,v:v});id++;
+  }
+  var hijosMap=new Map(),byId=new Map();
+  nodos.forEach(function(n){hijosMap.set(n.id,[]);byId.set(n.id,n);});
+  nodos.forEach(function(n){if(n.p!==null)hijosMap.get(n.p).push(n.id);});
+  return {nodos:nodos,hijosMap:hijosMap,byId:byId,raices:nodos.filter(function(n){return n.p===null;})};
+}
+function addSubtree(id){selectedIds.add(String(id));(parsed.hijosMap.get(id)||[]).forEach(addSubtree);}
+function removeSubtree(id){selectedIds.delete(String(id));(parsed.hijosMap.get(id)||[]).forEach(removeSubtree);}
+function syncCheckbox(cb,id){
+  var children=parsed.hijosMap.get(id)||[];var isSel=selectedIds.has(String(id));
+  if(!children.length){cb.checked=isSel;cb.indeterminate=false;return;}
+  var anyChild=children.some(function(c){return selectedIds.has(String(c));});
+  if(isSel){cb.checked=true;cb.indeterminate=false;}
+  else if(anyChild){cb.checked=false;cb.indeterminate=true;}
+  else{cb.checked=false;cb.indeterminate=false;}
+}
+function updateAllCheckboxes(){document.querySelectorAll('.nodo-chk').forEach(function(cb){syncCheckbox(cb,parseInt(cb.dataset.id));});}
+function buildReadingList(){
+  if(!parsed)return[];
+  if(selectedIds.size===0)return parsed.nodos.map(function(n){return n.e;});
+  return parsed.nodos.filter(function(n){return selectedIds.has(String(n.id));}).map(function(n){return n.e;});
+}
+function actualizarTiempoEstimado(){
+  var texto=buildReadingList().join(' ');
+  var palabras=texto.trim().split(/\s+/).filter(function(x){return x;}).length;
+  var rate=parseFloat(lsGet(K.rate,'0.9'))||0.9;
+  var seg=Math.round((palabras/175*60)/rate);
+  estimatedTime.textContent='~'+Math.floor(seg/60)+'m '+String(seg%60).padStart(2,'0')+'s ('+palabras+' pal.)';
+}
+function updateProgress(){
+  var n=selectedIds.size;
+  if(n===0){progressInfo.textContent='Todos los nodos';progressInfo.classList.remove('ok');}
+  else{progressInfo.textContent=n+' seleccionado'+(n===1?'':'s');progressInfo.classList.add('ok');}
+  actualizarTiempoEstimado();
+}
+function render(searchTerm){
+  try{
+    parsed=parsear(raw);
+    var term=(searchTerm||'').toLowerCase().trim();
+    mapaDiv.innerHTML='';
+    if(!parsed.raices.length){
+      mapaDiv.innerHTML='<div style="text-align:center;color:var(--text-sec);padding:40px">Sin estructura detectada.</div>';
+      updateProgress();return;
+    }
+    var cont=document.createElement('div');
+    function construir(id){
+      var n=parsed.byId.get(id);if(!n)return null;
+      var hijos=parsed.hijosMap.get(id)||[];
+      var card=document.createElement('div');
+      card.className='card-nodo level-'+Math.min(n.v,4);card.dataset.id=id;
+      var td=document.createElement('div');td.className='nodo-titulo';
+      var chk=document.createElement('input');
+      chk.type='checkbox';chk.className='nodo-chk';chk.dataset.id=id;
+      syncCheckbox(chk,id);
+      chk.addEventListener('click',function(e){e.stopPropagation();});
+      chk.addEventListener('change',function(e){
+        e.stopPropagation();
+        if(chk.checked)addSubtree(id);else removeSubtree(id);
+        saveSet(K.sel,selectedIds);updateAllCheckboxes();updateProgress();
+      });
+      td.appendChild(chk);
+      var sp=document.createElement('span');sp.className='titulo-txt';sp.textContent=n.e;td.appendChild(sp);
+      var icono=null;
+      if(hijos.length){icono=document.createElement('span');icono.className='icono-toggle';icono.textContent=collapsedIds.has(String(id))?'▶':'▼';td.appendChild(icono);}
+      card.appendChild(td);
+      var contH=null;
+      if(hijos.length){
+        contH=document.createElement('div');
+        contH.className='nodo-hijos'+(collapsedIds.has(String(id))?' collapsed':'');
+        hijos.forEach(function(h){var c=construir(h);if(c)contH.appendChild(c);});
+        card.appendChild(contH);
+      }
+      card.addEventListener('click',function(e){
+        e.stopPropagation();
+        if(contH&&icono){
+          contH.classList.toggle('collapsed');
+          var isCol=contH.classList.contains('collapsed');
+          icono.textContent=isCol?'▶':'▼';
+          if(isCol)collapsedIds.add(String(id));else collapsedIds.delete(String(id));
+          saveSet(K.coll,collapsedIds);
+        }
+      });
+      return card;
+    }
+    parsed.raices.forEach(function(r){var c=construir(r.id);if(c)cont.appendChild(c);});
+    mapaDiv.appendChild(cont);
+    updateProgress();
+  }catch(err){console.error('render error:',err);mapaDiv.innerHTML='<div style="color:#e74c3c;padding:20px">Error: '+err.message+'</div>';}
+}
+
+function poblarVoces(){
+  var voces=synth.getVoices().filter(function(v){return v.lang.indexOf('es')===0;});
+  voiceSelect.innerHTML='';
+  if(!voces.length){var o=document.createElement('option');o.textContent='(Cargando…)';voiceSelect.appendChild(o);return;}
+  voces.forEach(function(v,i){var o=document.createElement('option');o.value=i;o.textContent=v.name+' ('+v.lang+')';voiceSelect.appendChild(o);});
+  var saved=parseInt(lsGet(K.voice,'-1'));
+  if(!isNaN(saved)&&saved>=0&&saved<voces.length){voiceSelect.value=saved;return;}
+  var pref=-1;
+  for(var j=0;j<voces.length;j++){if(voces[j].lang.toLowerCase().indexOf('es-us')===0){pref=j;break;}}
+  if(pref<0)for(var k=0;k<voces.length;k++){var n=voces[k].name.toLowerCase();if(n.indexOf('sabina')!==-1||n.indexOf('paulina')!==-1||n.indexOf('monica')!==-1||n.indexOf('mónica')!==-1){pref=k;break;}}
+  if(pref<0)pref=0;
+  voiceSelect.value=pref;
+}
+if(synth.onvoiceschanged!==undefined)synth.onvoiceschanged=poblarVoces;
+poblarVoces();setTimeout(poblarVoces,300);setTimeout(poblarVoces,800);setTimeout(poblarVoces,1500);
+voiceSelect.addEventListener('change',function(){lsSet(K.voice,voiceSelect.value);});
+
+function fmt(s){var m=Math.floor(s/60),g=s%60;return(m<10?'0':'')+m+':'+(g<10?'0':'')+g;}
+function iniciarCrono(){if(cronoInterval)return;cronoInicioTramo=Date.now();cronoInterval=setInterval(function(){var t=Math.floor((Date.now()-cronoInicioTramo)/1000);timerDisplay.textContent=fmt(cronoSegundos+t);},250);}
+function pausarCrono(){if(!cronoInterval)return;var t=Math.floor((Date.now()-cronoInicioTramo)/1000);cronoSegundos+=t;clearInterval(cronoInterval);cronoInterval=null;timerDisplay.textContent=fmt(cronoSegundos);}
+function resetCrono(){if(cronoInterval){clearInterval(cronoInterval);cronoInterval=null;}cronoSegundos=0;cronoInicioTramo=0;timerDisplay.textContent='00:00';}
+
+function limpiarSynth(){generacion++;try{if(utterance){utterance.onend=null;utterance.onerror=null;utterance.onboundary=null;}if(synth.paused)synth.resume();synth.cancel();}catch(e){}}
+function hablar(txt,cb){
+  var miGen=generacion;
+  var oraciones=dividirOracionesConOffsets(txt);
+  var idx=0;
+  function hablarSiguiente(){
+    if(miGen!==generacion||estado!=='leyendo')return;
+    if(idx>=oraciones.length){cb();return;}
+    var item=oraciones[idx];
+    var offset=item.posicionInicio;
+    try{
+      var u=new SpeechSynthesisUtterance(item.texto);
+      u.lang='es-ES';
+      var voces=synth.getVoices().filter(function(x){return x.lang.indexOf('es')===0;});
+      if(voces.length){var i=parseInt(voiceSelect.value);if(isNaN(i)||i<0||i>=voces.length)i=0;u.voice=voces[i];}
+      u.rate=parseFloat(lsGet(K.rate,'0.9'))||0.9;
+      u.pitch=parseFloat(lsGet(K.pitch,'1'))||1;
+      u.onboundary=function(ev){if(!karaokeActivo||miGen!==generacion)return;if(ev.name==='word'||ev.name==='sentence'){lastBoundaryTime=Date.now();resaltarPalabra(offset+ev.charIndex);}};
+      u.onend=function(){if(miGen!==generacion||estado!=='leyendo')return;idx++;setTimeout(hablarSiguiente,30);};
+      u.onerror=function(e){var err=e.error||'';if(err==='interrupted'||err==='canceled')return;if(miGen!==generacion)return;if(estado==='leyendo')setTimeout(function(){if(estado==='leyendo'&&miGen===generacion){idx++;hablarSiguiente();}},200);};
+      utterance=u;
+      lastBoundaryTime=Date.now();
+      synth.speak(u);
+      if(karaokeActivo)startKaraokeFallback();
+    }catch(e){idx++;setTimeout(hablarSiguiente,100);}
+  }
+  setTimeout(hablarSiguiente,200);
+}
+
+function leerSig(){
+  if(estado!=='leyendo')return;
+  if(indiceActual>=listaNodos.length){
+    if(bucleCapturas){indiceActual=0;statusEl.textContent='🎯 Bucle cap. reiniciando…';setTimeout(leerSig,500);return;}
+    if(bucleInfinito){indiceActual=0;statusEl.textContent='🔄∞ Bucle infinito reiniciando…';setTimeout(leerSig,500);return;}
+    if(bucleActivo){indiceActual=0;statusEl.textContent='🔁 Bucle reiniciando…';setTimeout(leerSig,500);return;}
+    estado='detenido';statusEl.textContent='Finalizado';btnPlay.textContent='▶';pausarCrono();liberarMantenimiento();stopKaraokeFallback();return;
+  }
+  var txt=listaNodos[indiceActual];var lim=limpiarTexto(txt);
+  if(!lim){indiceActual++;leerSig();return;}
+  var p=bucleCapturas?'🎯 ':bucleInfinito?'🔄∞ ':bucleActivo?'🔁 ':'🔊 ';
+  statusEl.textContent=p+'('+(indiceActual+1)+'/'+listaNodos.length+')';
+  if(karaokeActivo)prepararKaraoke(txt);
+  hablar(lim,function(){indiceActual++;leerSig();});
+}
+function detenerLectura(){
+  estado='detenido';limpiarSynth();utterance=null;indiceActual=0;listaNodos=[];
+  btnPlay.textContent='▶';statusEl.textContent='Detenido';resetCrono();liberarMantenimiento();stopKaraokeFallback();
+  bucleCapturas=false;kLoopCap.style.background='#9b59b6';
+  bucleInfinito=false;kLoopInf.style.background='#9b59b6';
+}
+function togglePlayPause(){
+  if(estado==='leyendo'){estado='pausado';limpiarSynth();stopKaraokeFallback();btnPlay.textContent='▶';statusEl.textContent='⏸ Pausado';pausarCrono();return;}
+  if(estado==='pausado'){estado='leyendo';btnPlay.textContent='⏸';statusEl.textContent='🔊 Reanudando…';iniciarCrono();activarMantenimiento();setTimeout(leerSig,250);return;}
+  var nueva=buildReadingList();
+  if(!nueva.length){statusEl.textContent='Sin contenido';return;}
+  listaNodos=nueva;indiceActual=0;resetCrono();iniciarCrono();
+  estado='leyendo';btnPlay.textContent='⏸';
+  statusEl.textContent=selectedIds.size>0?('🔊 Leyendo selección ('+listaNodos.length+')'):'🔊 Iniciando…';
+  activarMantenimiento();setTimeout(leerSig,250);
+}
+
+function prepararKaraoke(txt){
+  karaokeBody.innerHTML='';karaokeWords=[];karaokePositions=[];karaokeCurrentIdx=-1;stopKaraokeFallback();
+  var limpio=limpiarTexto(txt);
+  if(!limpio){karaokeBody.textContent='(Sin texto)';return;}
+  var t=document.createElement('div');t.className='knt';t.textContent='▶ '+txt;karaokeBody.appendChild(t);
+  var c=document.createElement('div');
+  var pals=limpio.split(/\s+/),pos=0;
+  for(var i=0;i<pals.length;i++){
+    var w=pals[i];if(!w){pos++;continue;}
+    var s=document.createElement('span');s.textContent=w;s.className='kw';c.appendChild(s);
+    karaokePositions.push({start:pos,end:pos+w.length,idx:i});
+    pos+=w.length+1;c.appendChild(document.createTextNode(' '));karaokeWords.push(s);
+  }
+  karaokeBody.appendChild(c);karaokeBody.scrollTop=0;karaokeBody.style.fontSize=fontSizeKaraoke+'rem';
+}
+function scrollKaraokeWord(el){
+  if(!el||!karaokeBody)return;
+  try{
+    var cRect=karaokeBody.getBoundingClientRect();var eRect=el.getBoundingClientRect();
+    var relTop=(eRect.top-cRect.top)+karaokeBody.scrollTop;var target=relTop-(cRect.height/2)+(eRect.height/2);
+    target=Math.max(0,target);
+    if(Math.abs(karaokeBody.scrollTop-target)>30){karaokeBody.scrollTo({top:target,behavior:'smooth'});}
+  }catch(e){}
+}
+function highlightWordByIndex(i){
+  if(i<0||i>=karaokeWords.length)return;if(karaokeCurrentIdx===i)return;
+  if(karaokeCurrentIdx>=0&&karaokeWords[karaokeCurrentIdx])karaokeWords[karaokeCurrentIdx].classList.remove('hl');
+  karaokeWords[i].classList.add('hl');karaokeCurrentIdx=i;scrollKaraokeWord(karaokeWords[i]);
+}
+function resaltarPalabra(ci){
+  if(!karaokePositions.length)return;
+  for(var i=0;i<karaokePositions.length;i++){
+    var p=karaokePositions[i];
+    if(ci>=p.start&&ci<p.end){if(i<karaokeCurrentIdx)return;highlightWordByIndex(i);return;}
+  }
+}
+function startKaraokeFallback(){
+  stopKaraokeFallback();var rate=parseFloat(lsGet(K.rate,'0.9'))||0.9;var GRACE=1200;
+  function scheduleNext(){
+    if(estado!=='leyendo'){stopKaraokeFallback();return;}
+    if(Date.now()-lastBoundaryTime<GRACE){karaokeFallbackTimer=setTimeout(scheduleNext,400);return;}
+    var nextIdx=(karaokeCurrentIdx>=0?karaokeCurrentIdx:-1)+1;
+    if(nextIdx>=karaokeWords.length){stopKaraokeFallback();return;}
+    highlightWordByIndex(nextIdx);
+    var wLen=(karaokeWords[nextIdx].textContent||'').length;
+    var ms=Math.max(200,(wLen*25+125)/rate);
+    karaokeFallbackTimer=setTimeout(scheduleNext,ms);
+  }
+  karaokeFallbackTimer=setTimeout(scheduleNext,GRACE+100);
+}
+function stopKaraokeFallback(){if(karaokeFallbackTimer){clearTimeout(karaokeFallbackTimer);karaokeFallbackTimer=null;}}
+
+function actualizarCapturasPanel(){
+  capturasCount.textContent=capturas.length;
+  if(!capturas.length){capturasList.innerHTML='<div class="cap-vacio">No hay capturas. Selecciona texto y pulsa ⭐</div>';return;}
+  capturasList.innerHTML='';
+  capturas.forEach(function(txt,idx){
+    var it=document.createElement('div');it.className='cap-item';
+    var t=document.createElement('div');t.className='cap-text';t.textContent=(idx+1)+'. '+txt;
+    var a=document.createElement('div');a.className='cap-acc';
+    var b1=document.createElement('button');b1.textContent='📋';b1.onclick=function(){navigator.clipboard.writeText(txt);};
+    var b2=document.createElement('button');b2.textContent='🗑';b2.onclick=function(){capturas.splice(idx,1);lsSet(K.caps,JSON.stringify(capturas));actualizarCapturasPanel();};
+    a.appendChild(b1);a.appendChild(b2);it.appendChild(t);it.appendChild(a);capturasList.appendChild(it);
+  });
+}
+var INIT_THEME='dark';
+function aplicarTema(){
+  var saved=lsGet(K.theme,'')||INIT_THEME||'';
+  var dark;
+  if(saved==='dark')dark=true;else if(saved==='light')dark=false;
+  else dark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.body.classList.toggle('dark',dark);btnTheme.textContent=dark?'☀️ Claro':'🌙 Oscuro';
+}
+
+/* Configuración Export */
+var configExpModal=$('configExpModal');
+$('btnConfigExp').addEventListener('click',function(){
+  $('geminiKeyExp').value = lsGet(K.gemini,'');
+  configExpModal.classList.add('show');
+});
+$('closeConfigExp').addEventListener('click',function(){configExpModal.classList.remove('show');});
+$('saveConfigExp').addEventListener('click',function(){
+  var val = $('geminiKeyExp').value.trim();
+  lsSet(K.gemini, val);
+  configExpModal.classList.remove('show');
+});
+
+/* Modal de Bienvenida */
+var welcomeModal = $('welcomeModal');
+if(!localStorage.getItem('nexus_welcome_shown_'+slug)) {
+  welcomeModal.classList.add('show');
+}
+function cerrarWelcome(){
+  welcomeModal.classList.remove('show');
+  localStorage.setItem('nexus_welcome_shown_'+slug, 'true');
+}
+$('closeWelcome').addEventListener('click', cerrarWelcome);
+$('btnEntendido').addEventListener('click', cerrarWelcome);
+$('btnHelp').addEventListener('click', function(){ welcomeModal.classList.add('show'); });
+
+/* Lógica Donación */
+if(typeof DONATION_ENABLED !== 'undefined' && DONATION_ENABLED) {
+  var btnD = $('btnDonar');
+  if(btnD) {
+    btnD.style.display = 'inline-block';
+    btnD.addEventListener('click', function(){ $('donationModal').classList.add('show'); });
+  }
+  var closeD1 = $('closeDonation'); if(closeD1) closeD1.addEventListener('click', function(){ $('donationModal').classList.remove('show'); });
+  var closeD2 = $('btnCloseDonation2'); if(closeD2) closeD2.addEventListener('click', function(){ $('donationModal').classList.remove('show'); });
+}
+
+btnPlay.addEventListener('click',togglePlayPause);
+btnStop.addEventListener('click',detenerLectura);
+btnLoop.addEventListener('click',function(){bucleActivo=!bucleActivo;btnLoop.classList.toggle('active',bucleActivo);btnLoop.textContent=bucleActivo?'🔁✅':'🔁';});
+btnTheme.addEventListener('click',function(){var dark=!document.body.classList.contains('dark');lsSet(K.theme,dark?'dark':'light');aplicarTema();});
+btnExpandir.addEventListener('click',function(){
+  collapsedIds.clear();saveSet(K.coll,collapsedIds);
+  document.querySelectorAll('.nodo-hijos').forEach(function(c){c.classList.remove('collapsed');});
+  document.querySelectorAll('.icono-toggle').forEach(function(i){i.textContent='▼';});collapseLevel.value='';
+});
+btnColapsar.addEventListener('click',function(){
+  document.querySelectorAll('.nodo-hijos').forEach(function(c){c.classList.add('collapsed');});
+  document.querySelectorAll('.icono-toggle').forEach(function(i){i.textContent='▶';});
+  if(parsed)parsed.nodos.forEach(function(n){if((parsed.hijosMap.get(n.id)||[]).length)collapsedIds.add(String(n.id));});
+  saveSet(K.coll,collapsedIds);collapseLevel.value='';
+});
+collapseLevel.addEventListener('change',function(){
+  var lvl=this.value;if(lvl==='')return;var n=parseInt(lvl);collapsedIds.clear();
+  if(parsed)parsed.nodos.forEach(function(node){var hijos=parsed.hijosMap.get(node.id)||[];if(hijos.length&&node.v>=n)collapsedIds.add(String(node.id));});
+  saveSet(K.coll,collapsedIds);
+  document.querySelectorAll('.card-nodo').forEach(function(card){
+    var id=parseInt(card.dataset.id);var contH=card.querySelector(':scope > .nodo-hijos');
+    var ic=card.querySelector(':scope > .nodo-titulo > .icono-toggle');
+    if(contH&&ic){var col=collapsedIds.has(String(id));contH.classList.toggle('collapsed',col);ic.textContent=col?'▶':'▼';}
+  });
+  this.value='';
+});
+btnClearSel.addEventListener('click',function(){selectedIds.clear();saveSet(K.sel,selectedIds);updateAllCheckboxes();updateProgress();});
+searchInput.addEventListener('input',function(){render(this.value);});
+clearSearch.addEventListener('click',function(){searchInput.value='';render('');});
+
+btnKaraoke.addEventListener('click',function(){
+  karaokeActivo=!karaokeActivo;btnKaraoke.classList.toggle('active',karaokeActivo);
+  if(karaokeActivo){
+    karaokeModal.classList.add('show');var idx=indiceActual;
+    if(listaNodos.length>0&&idx<listaNodos.length)prepararKaraoke(listaNodos[idx]);
+    else{var l=buildReadingList();if(l.length>0)prepararKaraoke(l[0]);else karaokeBody.innerHTML='<div style="text-align:center;color:var(--text-sec);padding:40px">Sin contenido</div>';}
+    actualizarCapturasPanel();
+  }else{karaokeModal.classList.remove('show');stopKaraokeFallback();}
+});
+kClose.addEventListener('click',function(){karaokeActivo=false;btnKaraoke.classList.remove('active');karaokeModal.classList.remove('show');stopKaraokeFallback();});
+kPlay.addEventListener('click',togglePlayPause);
+kPause.addEventListener('click',function(){if(estado==='leyendo'){estado='pausado';limpiarSynth();stopKaraokeFallback();btnPlay.textContent='▶';statusEl.textContent='Pausado';pausarCrono();}});
+kStop.addEventListener('click',detenerLectura);
+kPrev.addEventListener('click',function(){if(!listaNodos.length)listaNodos=buildReadingList();if(indiceActual>0){limpiarSynth();indiceActual--;estado='leyendo';prepararKaraoke(listaNodos[indiceActual]);btnPlay.textContent='⏸';if(!cronoInterval)iniciarCrono();activarMantenimiento();leerSig();}});
+kNext.addEventListener('click',function(){if(!listaNodos.length)listaNodos=buildReadingList();if(indiceActual<listaNodos.length-1){limpiarSynth();indiceActual++;estado='leyendo';prepararKaraoke(listaNodos[indiceActual]);btnPlay.textContent='⏸';if(!cronoInterval)iniciarCrono();activarMantenimiento();leerSig();}});
+kRepeat.addEventListener('click',function(){if(!listaNodos.length)listaNodos=buildReadingList();if(indiceActual>=listaNodos.length)indiceActual=0;limpiarSynth();estado='leyendo';prepararKaraoke(listaNodos[indiceActual]);btnPlay.textContent='⏸';if(!cronoInterval)iniciarCrono();activarMantenimiento();leerSig();});
+kLoopInf.addEventListener('click',function(){bucleInfinito=!bucleInfinito;kLoopInf.style.background=bucleInfinito?'#27ae60':'#9b59b6';statusEl.textContent=bucleInfinito?'🔄∞ INFINITO on':'🔄∞ off';});
+kCapture.addEventListener('click',function(){
+  var sel=window.getSelection(),texto=sel.toString().trim();
+  if(!texto){if(listaNodos.length>0&&indiceActual<listaNodos.length)texto=listaNodos[indiceActual];else if(selectedIds.size>0){var l=buildReadingList();texto=l[0]||'';}if(!texto){alert('Selecciona texto o inicia la lectura');return;}}
+  capturas.push(texto);lsSet(K.caps,JSON.stringify(capturas));actualizarCapturasPanel();statusEl.textContent='⭐ Captura añadida ('+capturas.length+')';
+  try{sel.removeAllRanges();}catch(e){}
+});
+capDownload.addEventListener('click',function(){
+  if(!capturas.length){alert('No hay capturas');return;}
+  var c='CAPTURAS — '+document.title+'\nFecha: '+new Date().toLocaleString('es-ES')+'\nTotal: '+capturas.length+'\n\n';
+  capturas.forEach(function(t,i){c+='【 '+(i+1)+' 】\n\n'+t+'\n\n---\n\n';});
+  var b=new Blob([c],{type:'text/plain;charset=utf-8'});var u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download='capturas_'+Date.now()+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(u);},1000);
+});
+capCopy.addEventListener('click',function(){if(!capturas.length){alert('No hay capturas');return;}navigator.clipboard.writeText(capturas.join('\n\n---\n\n')).then(function(){statusEl.textContent='📋 Copiadas';});});
+capClear.addEventListener('click',function(){if(!capturas.length)return;if(confirm('¿Eliminar '+capturas.length+' capturas?')){capturas=[];lsSet(K.caps,'[]');actualizarCapturasPanel();}});
+kLoopCap.addEventListener('click',function(){
+  if(bucleCapturas){bucleCapturas=false;kLoopCap.style.background='#9b59b6';statusEl.textContent='🎯 Bucle cap. off';return;}
+  if(!capturas.length){alert('No hay capturas');return;}
+  bucleCapturas=true;kLoopCap.style.background='#27ae60';listaNodos=capturas.slice();indiceActual=0;estado='leyendo';
+  if(!cronoInterval)iniciarCrono();btnPlay.textContent='⏸';activarMantenimiento();statusEl.textContent='🎯 Bucle capturas ('+capturas.length+')';
+  setTimeout(leerSig,200);
+});
+
+kFontUp.addEventListener('click',function(){fontSizeKaraoke=Math.min(4,fontSizeKaraoke+0.2);karaokeBody.style.fontSize=fontSizeKaraoke+'rem';});
+kFontDown.addEventListener('click',function(){fontSizeKaraoke=Math.max(0.8,fontSizeKaraoke-0.2);karaokeBody.style.fontSize=fontSizeKaraoke+'rem';});
+
+/* ============================================================
+   SÍNTESIS CON GEMINI Y PRISMAR (PRODUCTO FINAL)
+   ============================================================ */
+async function generarSintesisCapturas(){
+  if(!capturas.length) return null;
+
+  var geminiApiKey = lsGet(K.gemini, '');
+  if(!geminiApiKey) {
+    alert('⚠️ Para usar la IA, primero debes configurar tu API Key en el botón ⚙️ (arriba a la derecha).');
+    $('btnConfigExp').click();
+    return null;
+  }
+
+  var titulo = (document.title||'Documento').replace(/^▶\s*/,'').trim();
+  var capturasTexto = capturas.map(function(c, i){ return '[Captura ' + (i+1) + ']: "' + c + '"'; }).join('\n\n');
+
+  var prompt = 'Actúa como un experto pedagogo, teólogo y analista de textos. Tu tarea es realizar una síntesis profunda y correlativa de los siguientes fragmentos extraídos del documento titulado "' + titulo + '".\n\n' +
+  'Instrucciones:\n' +
+  '1. NO te limites a enumerar o copiar. Debes hilar un argumento lógico que conecte las ideas centrales de todas las capturas.\n' +
+  '2. Contextualiza el contenido. Si el texto habla de justicia, poder o enseñanzas, haz referencias cruzadas con conceptos filosóficos, teológicos o pedagógicos más amplios.\n' +
+  '3. Cita explícitamente el número de captura (ej. "como se ve en la Captura 2...") cuando uses sus ideas.\n' +
+  '4. Aclara en la conclusión que esta síntesis fue generada por Gemini AI.\n\n' +
+  'Aquí están las capturas:\n' + capturasTexto + '\n\n' +
+  'Devuelve el resultado EXACTAMENTE con este formato (sin añadir texto extra antes o después):\n' +
+  '[INICIO_TEXTO_ENRIQUECIDO]\n(Aquí redacta un análisis profundo, pedagógico y fluido, estructurado en párrafos con emojis contextuales)\n[FIN_TEXTO_ENRIQUECIDO]\n' +
+  '[INICIO_SUMULA]\n(Aquí redacta la SÚMULA en formato Markdown: # Título, ## Conceptos, - Ideas clave, usando la misma correlación lógica)\n[FIN_SUMULA]';
+
+  try {
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+    var response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-goog-api-key': geminiApiKey
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+
+    if (!response.ok) {
+      var errData = await response.json();
+      throw new Error((errData.error && errData.error.message) || 'Error en la API de Gemini');
+    }
+
+    var data = await response.json();
+    var aiText = data.candidates[0].content.parts[0].text;
+
+    var txtMatch = aiText.match(/\[INICIO_TEXTO_ENRIQUECIDO\]([\s\S]*?)\[FIN_TEXTO_ENRIQUECIDO\]/);
+    var sumMatch = aiText.match(/\[INICIO_SUMULA\]([\s\S]*?)\[FIN_SUMULA\]/);
+
+    var finalTxt = txtMatch ? txtMatch[1].trim() : aiText;
+    var finalSum = sumMatch ? sumMatch[1].trim() : aiText;
+
+    return { txt: finalTxt, sumula: finalSum, titulo: titulo };
+
+  } catch (error) {
+    console.error('Gemini Error:', error);
+    alert('❌ Error al conectar con Gemini AI: ' + error.message);
+    return null;
+  }
+}
+
+/* 🔮 MOTOR DEL PRISMA VISUAL */
+function generarPrismaVisual(markdownText) {
+  var container = $('prismarContent');
+  container.innerHTML = '';
+
+  if(!markdownText) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-sec);padding:40px; font-size:1.2rem;">No hay datos para prismar.</div>';
+    return;
+  }
+
+  var lineas = markdownText.split('\n');
+  var html = '';
+
+  lineas.forEach(function(linea, index) {
+    linea = linea.trim();
+    if(!linea) return;
+    var delay = index * 0.05;
+
+    if(linea.indexOf('# ') === 0) {
+      html += '<div class="prisma-node" style="animation-delay:'+delay+'s"><div class="prisma-title"><i class="fas fa-gem"></i> ' + linea.slice(2) + '</div></div>';
+    } else if(linea.indexOf('## ') === 0) {
+      html += '<div class="prisma-node nivel-1" style="animation-delay:'+delay+'s"><div class="prisma-subtitle">▼ ' + linea.slice(3) + '</div></div>';
+    } else if(linea.indexOf('### ') === 0) {
+      html += '<div class="prisma-node nivel-2" style="animation-delay:'+delay+'s"><div class="prisma-text" style="font-weight:700;color:var(--prisma-emerald);">■ ' + linea.slice(4) + '</div></div>';
+    } else if(linea.indexOf('- ') === 0 || linea.indexOf('* ') === 0) {
+      html += '<div class="prisma-node nivel-3" style="animation-delay:'+delay+'s"><div class="prisma-bullet">' + linea.slice(2) + '</div></div>';
+    } else {
+      html += '<div class="prisma-node nivel-1" style="animation-delay:'+delay+'s"><div class="prisma-text">' + linea + '</div></div>';
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+var sintesisModal=$('sintesisModal'),sintesisTxt=$('sintesisTxt'),sintesisSumula=$('sintesisSumula'),tabTxt=$('tabTxt'),tabSumula=$('tabSumula'),tabPrismar=$('tabPrismar'),prismarContainer=$('prismarContainer');
+
+function resetTabs() {
+  tabTxt.classList.remove('active'); tabSumula.classList.remove('active'); tabPrismar.classList.remove('active');
+  sintesisTxt.style.display='none'; sintesisSumula.style.display='none';
+}
+
+tabTxt.addEventListener('click',function(){resetTabs();tabTxt.classList.add('active');sintesisTxt.style.display='block';});
+tabSumula.addEventListener('click',function(){resetTabs();tabSumula.classList.add('active');sintesisSumula.style.display='block';});
+tabPrismar.addEventListener('click',function(){
+  resetTabs();
+  tabPrismar.classList.add('active');
+  generarPrismaVisual(sintesisSumula.value);
+  prismarContainer.style.display='flex';
+});
+
+$('btnCerrarPrisma').addEventListener('click', function(){
+  prismarContainer.style.display='none';
+  tabSumula.click();
+});
+
+capSintesis.addEventListener('click',async function(){
+  if(!capturas.length){alert('No hay capturas para sintetizar.');return;}
+
+  var btn = this;
+  var originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner-border" style="width:1rem;height:1rem;border-width:2px;"></span> Analizando...';
+  btn.disabled = true;
+
+  sintesisTxt.value = '✨ Gemini AI está analizando las capturas y correlacionando conceptos... Por favor espera.';
+  sintesisSumula.value = '✨ Generando SÚMULA...';
+
+  resetTabs();
+  tabTxt.classList.add('active');
+  sintesisTxt.style.display='block';
+  sintesisModal.classList.add('show');
+
+  var result = await generarSintesisCapturas();
+
+  btn.innerHTML = originalText;
+  btn.disabled = false;
+
+  if (result) {
+    sintesisTxt.value = result.txt;
+    sintesisSumula.value = result.sumula;
+    if(tabPrismar.classList.contains('active')) generarPrismaVisual(result.sumula);
+  } else {
+    sintesisTxt.value = '❌ No se pudo generar la síntesis. Revisa tu API Key en los ajustes.';
+  }
+});
+$('closeSintesisModal').addEventListener('click',function(){sintesisModal.classList.remove('show'); prismarContainer.style.display='none';});
+$('sintesisCancelar').addEventListener('click',function(){sintesisModal.classList.remove('show'); prismarContainer.style.display='none';});
+$('sintesisDownload').addEventListener('click',function(){
+  var contenido = sintesisTxt.style.display!=='none'?sintesisTxt.value:sintesisSumula.value;
+  if(!contenido){alert('Nada que descargar');return;}
+  var ext=sintesisTxt.style.display!=='none'?'txt':'md';
+  var blob=new Blob([contenido],{type:'text/plain;charset=utf-8'});var u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download='sintesis_gemini_'+Date.now()+'.'+ext;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(u);},1000);
+});
+$('sintesisCopy').addEventListener('click',function(){
+  var contenido = sintesisTxt.style.display!=='none'?sintesisTxt.value:sintesisSumula.value;
+  if(!contenido){alert('Nada que copiar');return;}
+  navigator.clipboard.writeText(contenido).then(function(){
+    var btn=$('sintesisCopy');var original=btn.textContent;btn.textContent='✅ ¡Copiado!';setTimeout(function(){btn.textContent=original;},1500);
+  });
+});
+
+document.addEventListener('keydown',function(e){
+  var tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select')return;
+  if(e.code==='Space'){e.preventDefault();togglePlayPause();}
+  else if(e.key==='t'||e.key==='T'){btnTheme.click();}
+  else if(e.key==='e'||e.key==='E'){btnExpandir.click();}
+  else if(e.key==='c'||e.key==='C'){btnColapsar.click();}
+  else if(e.key==='k'||e.key==='K'){btnKaraoke.click();}
+  else if(e.key==='Escape'){
+    if(prismarContainer.style.display==='flex'){ $('btnCerrarPrisma').click(); }
+    else if(karaokeActivo){kClose.click();}
+    else if(sintesisModal.classList.contains('show')){ $('sintesisCancelar').click(); }
+    else if($('donationModal').classList.contains('show')){ $('donationModal').classList.remove('show'); }
+  }
+});
+aplicarTema();
+if (window.__NEXUS_AUTH_OK) { render(''); }
+else { window.__NEXUS_INIT = function(){ render(''); }; }
+actualizarCapturasPanel();
+})();
+</script>
+
+<div class="prisma-footer">
+  <img src="./favicon.png" style="height:32px;opacity:0.8;margin-bottom:8px;" alt="PRISMA"><br>
+  <b>PRISMA</b><br>
+  <span style="opacity:0.7;font-size:11px;display:block;margin-top:4px;">Lectoescucha Interactiva · Editado por Nexus Acelerador</span>
+</div>
+
+
+
